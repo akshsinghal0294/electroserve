@@ -92,9 +92,7 @@ export default function BookService() {
         address,
       };
 
-      console.log("User Object:", user);
-      console.log("User ID:", user?.id);
-      console.log("Token:", localStorage.getItem("token"));
+     
 
       await api.post("/api/services/book", booking, {
         params: { userId: user.id },
@@ -110,8 +108,7 @@ export default function BookService() {
   };
 
   const today = new Date().toISOString().split("T")[0];
-  console.log("serviceType =", serviceType);
-  console.log(params.get("service"));
+ 
   return (
     <Box sx={{ margin: "0 auto", width: 600 }}>
 

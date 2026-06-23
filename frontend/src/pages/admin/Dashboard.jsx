@@ -213,7 +213,7 @@ export default function Dashboard() {
             Manage Products
           </Button>
 
-          <Button
+          {/* <Button
             variant="contained"
             color="secondary"
             startIcon={<ShoppingBagIcon />}
@@ -221,7 +221,7 @@ export default function Dashboard() {
             sx={{ borderRadius: 2 }}
           >
             Manage Orders
-          </Button>
+          </Button> */}
 
           <Button
             variant="contained"
@@ -235,7 +235,7 @@ export default function Dashboard() {
         </Box>
 
         {/* ====== RECENT ORDERS TABLE ====== */}
-        <Paper elevation={2} sx={{ borderRadius: 3, mb: 4 }}>
+        {/* <Paper elevation={2} sx={{ borderRadius: 3, mb: 4 }}>
           <Box sx={{ p: 3, pb: 1 }}>
             <Typography variant="h6" fontWeight="bold">
               Recent Orders
@@ -302,7 +302,7 @@ export default function Dashboard() {
               </TableBody>
             </Table>
           </TableContainer>
-        </Paper>
+        </Paper> */}
 
         {/* ====== RECENT BOOKINGS TABLE ====== */}
         <Paper elevation={2} sx={{ borderRadius: 3 }}>

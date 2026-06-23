@@ -129,7 +129,7 @@ export default function ManageBookings() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#f3f4f6" }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: "#f3f4f6"     , m:2}}>
 
       {/* Header */}
        {/* ====== HEADER ====== */}
@@ -157,7 +157,7 @@ export default function ManageBookings() {
 
         <Button
           component={Link}
-          to="/admin/dashboard"
+          to="/admin/products/add"
           variant="outlined"
           sx={{
             color: "white",
@@ -177,6 +177,7 @@ export default function ManageBookings() {
             display: "grid",
             gridTemplateColumns: {
               xs: "1fr",
+              
               sm: "repeat(2, 1fr)",
               md: "repeat(4, 1fr)",
             },
@@ -184,6 +185,7 @@ export default function ManageBookings() {
             mb: 4,
             mt: 4 ,
             ml: 2,
+         
 
           }}
         >
@@ -215,7 +217,7 @@ export default function ManageBookings() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  mb: 1.5,
+                  mb: 2,
                 }}
               >
                 {stat.icon}
@@ -239,7 +241,7 @@ export default function ManageBookings() {
           overflowX: "auto",          // ← horizontal scroll when content overflows
         //  width: "100%",
           maxWidth: "100%",
-         m: 1,
+         m: 2,
           width: "calc(100% - 16px)"
         //  margin:"5px",
         }}

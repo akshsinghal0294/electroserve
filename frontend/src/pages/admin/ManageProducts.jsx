@@ -3,6 +3,29 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Avatar,
+  Collapse,  // ✅ for smooth show/hide of form
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
 export default function ManageProducts() {
   const navigate = useNavigate();
@@ -193,411 +216,298 @@ export default function ManageProducts() {
     );
   }
 
-  return (
-    <div
-      style={{
-        padding: "30px",
-        maxWidth: "1400px",
-        margin: "0 auto",
+  return ( <Box sx={{minHeight: "100vh", bgcolor: "#f3f4f6", m: "2"}}>
+
+    {/* ============================
+        HEADER ROW
+        ✅ display flex + space-between = title on left, buttons on right
+        ============================ */}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: 3,
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          justifyContent:
-            "space-between",
-          alignItems:
-            "center",
-          marginBottom:
-            "20px",
-        }}
-      >
-        <h1>
-          Manage Products
-        </h1>
+      <Typography variant="h4" fontWeight="bold">
+        Manage Products
+      </Typography>
 
-        <div>
-          <button
-            onClick={() =>
-              navigate(
-                "/admin/dashboard"
-              )
-            }
-            style={{
-              marginRight:
-                "10px",
-            }}
-          >
-            Dashboard
-          </button>
+      <Box sx={{ display: "flex", gap: 1 }}>
+        {/* ✅ variant="outlined" = border only button */}
+        <Button
+          variant="outlined"
+          startIcon={<DashboardIcon />}
+          onClick={() => navigate("/admin/dashboard")}
+        >
+          Dashboard
+        </Button>
 
-          <button
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
-          >
-            Add Product
-          </button>
-        </div>
-      </div>
-
-      {showForm && (
-        <div
-          style={{
-            background:
-              "#fff",
-            padding:
-              "20px",
-            borderRadius:
-              "10px",
-            boxShadow:
-              "0 2px 8px rgba(0,0,0,0.1)",
-            marginBottom:
-              "25px",
+        {/* ✅ variant="contained" = filled blue button */}
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => {
+            resetForm();
+            setShowForm(true);
           }}
         >
-          <h2>
-            {editProduct
-              ? "Edit Product"
-              : "Add Product"}
-          </h2>
+          Add Product
+        </Button>
+      </Box>
+    </Box>
 
-          <form
-            onSubmit={
-              handleSubmit
-            }
-          >
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={
-                formData.name
-              }
-              onChange={
-                handleChange
-              }
-              required
-              style={{
-                width:
-                  "100%",
-                padding:
-                  "10px",
-                marginBottom:
-                  "10px",
-              }}
-            />
+    {/* ============================
+        ADD / EDIT FORM
+        ✅ Collapse = smooth expand/collapse animation
+           instead of just {showForm && <div>}
+        ✅ Paper = white card with shadow
+        ============================ */}
+    <Collapse in={showForm}>
+      <Paper elevation={3} sx={{ p: 3, borderRadius: 3, mb: 3 }}>
 
-            <textarea
-              name="description"
-              placeholder="Description"
-              value={
-                formData.description
-              }
-              onChange={
-                handleChange
-              }
-              rows="4"
-              required
-              style={{
-                width:
-                  "100%",
-                padding:
-                  "10px",
-                marginBottom:
-                  "10px",
-              }}
-            />
+        <Typography variant="h6" fontWeight="bold" mb={2}>
+          {editProduct ? "Edit Product" : "Add New Product"}
+        </Typography>
 
-            <input
-              type="number"
-              name="price"
-              placeholder="Price"
-              value={
-                formData.price
-              }
-              onChange={
-                handleChange
-              }
-              required
-              style={{
-                width:
-                  "100%",
-                padding:
-                  "10px",
-                marginBottom:
-                  "10px",
-              }}
-            />
+        {/* ✅ Box component="form" = MUI way to use a form
+            display grid = 2 columns side by side on desktop */}
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+            gap: 2,
+          }}
+        >
+          {/* ✅ TextField replaces <input type="text">
+              - label = floating label above input
+              - name + value + onChange = same as before
+              - required = same as HTML required */}
+          <TextField
+            label="Product Name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            fullWidth
+          />
 
-            <input
-              type="number"
-              name="stockQuantity"
-              placeholder="Stock Quantity"
-              value={
-                formData.stockQuantity
-              }
-              onChange={
-                handleChange
-              }
-              required
-              style={{
-                width:
-                  "100%",
-                padding:
-                  "10px",
-                marginBottom:
-                  "10px",
-              }}
-            />
+          <TextField
+            label="Brand"
+            name="brand"
+            value={formData.brand}
+            onChange={handleChange}
+            required
+            fullWidth
+          />
 
-            <input
-              type="text"
-              name="brand"
-              placeholder="Brand"
-              value={
-                formData.brand
-              }
-              onChange={
-                handleChange
-              }
-              required
-              style={{
-                width:
-                  "100%",
-                padding:
-                  "10px",
-                marginBottom:
-                  "10px",
-              }}
-            />
+          <TextField
+            label="Price (₹)"
+            name="price"
+            type="number"
+            value={formData.price}
+            onChange={handleChange}
+            required
+            fullWidth
+          />
 
-            <input
-              type="text"
-              name="imageUrl"
-              placeholder="Image URL"
-              value={
-                formData.imageUrl
-              }
-              onChange={
-                handleChange
-              }
-              required
-              style={{
-                width:
-                  "100%",
-                padding:
-                  "10px",
-                marginBottom:
-                  "10px",
-              }}
-            />
+          <TextField
+            label="Stock Quantity"
+            name="stockQuantity"
+            type="number"
+            value={formData.stockQuantity}
+            onChange={handleChange}
+            required
+            fullWidth
+          />
 
-            <select
+          <TextField
+            label="Image URL"
+            name="imageUrl"
+            value={formData.imageUrl}
+            onChange={handleChange}
+            required
+            fullWidth
+          />
+
+          {/* ✅ FormControl + InputLabel + Select = MUI dropdown
+              replaces <select> + <option> */}
+          <FormControl fullWidth required>
+            <InputLabel>Category</InputLabel>
+            <Select
               name="categoryId"
-              value={
-                formData.categoryId
-              }
-              onChange={
-                handleChange
-              }
-              required
-              style={{
-                width:
-                  "100%",
-                padding:
-                  "10px",
-                marginBottom:
-                  "15px",
-              }}
+              value={formData.categoryId}
+              label="Category"
+              onChange={handleChange}
             >
-              <option value="">
-                Select Category
-              </option>
+              <MenuItem value="">
+                <em>Select Category</em>
+              </MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-              {categories.map(
-                (
-                  category
-                ) => (
-                  <option
-                    key={
-                      category.id
-                    }
-                    value={
-                      category.id
-                    }
-                  >
-                    {
-                      category.name
-                    }
-                  </option>
-                )
-              )}
-            </select>
+          {/* ✅ multiline + rows = replaces <textarea rows="4"> 
+              gridColumn span = makes description full width */}
+          <TextField
+            label="Description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            required
+            fullWidth
+            multiline
+            rows={3}
+            sx={{ gridColumn: { sm: "1 / -1" } }}  
+          />
 
-            <button
+          {/* ✅ Action buttons row — also full width */}
+          <Box
+            sx={{
+              gridColumn: { sm: "1 / -1" },
+              display: "flex",
+              gap: 2,
+            }}
+          >
+            <Button
               type="submit"
-              style={{
-                marginRight:
-                  "10px",
-              }}
+              variant="contained"
+              color="success"
+              sx={{ px: 4 }}
             >
-              Save
-            </button>
+              {editProduct ? "Update" : "Save"}
+            </Button>
 
-            <button
+            <Button
               type="button"
-              onClick={
-                resetForm
-              }
+              variant="outlined"
+              color="error"
+              onClick={resetForm}
             >
               Cancel
-            </button>
-          </form>
-        </div>
-      )}
+            </Button>
+          </Box>
+        </Box>
+      </Paper>
+    </Collapse>
 
-      <div
-        style={{
-          overflowX:
-            "auto",
-          background:
-            "white",
-          borderRadius:
-            "10px",
-          padding:
-            "20px",
-          boxShadow:
-            "0 2px 8px rgba(0,0,0,0.1)",
-        }}
-      >
-        <table
-          style={{
-            width: "100%",
-            borderCollapse:
-              "collapse",
-          }}
-        >
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Brand</th>
-              <th>Price</th>
-              <th>Stock</th>
-              <th>Category</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+    {/* ============================
+        PRODUCTS TABLE
+        ✅ Paper wraps the table for white card look
+        ✅ TableContainer handles horizontal scroll
+        ============================ */}
+    <Paper elevation={2} sx={{ borderRadius: 3 }}>
+      <TableContainer>
+        <Table>
 
-          <tbody>
-            {products.map(
-              (product) => (
-                <tr
-                  key={
-                    product.id
-                  }
+          {/* ✅ TableHead = <thead> with grey background */}
+          <TableHead sx={{ bgcolor: "#f9fafb" }}>
+            <TableRow>
+              {["Image", "Name", "Brand", "Price", "Stock", "Category", "Actions"].map((col) => (
+                <TableCell
+                  key={col}
+                  sx={{ fontWeight: "bold", color: "#374151" }}
                 >
-                  <td>
-                    <img
-                      src={
-                        product.imageUrl
-                      }
-                      alt={
-                        product.name
-                      }
-                      width="60"
-                      height="60"
-                      style={{
-                        objectFit:
-                          "cover",
-                      }}
+                  {col}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {products.length === 0 ? (
+              // ✅ Empty state row
+              <TableRow>
+                <TableCell colSpan={7} align="center" sx={{ py: 5, color: "text.secondary" }}>
+                  No products found. Click "Add Product" to get started.
+                </TableCell>
+              </TableRow>
+            ) : (
+              products.map((product) => (
+                <TableRow
+                  key={product.id}
+                  sx={{ "&:hover": { bgcolor: "#f9fafb" } }} // {/* ✅ hover highlight */}
+                >
+
+                  {/* ✅ Avatar with src = circular image
+                      variant="rounded" = slightly rounded square
+                      replaces <img width=60 height=60> */}
+                  <TableCell>
+                    <Avatar
+                      src={product.imageUrl}
+                      alt={product.name}
+                      variant="rounded"
+                      sx={{ width: 56, height: 56 }}
                     />
-                  </td>
+                  </TableCell>
 
-                  <td>
-                    {
-                      product.name
-                    }
-                  </td>
+                  <TableCell>
+                    <Typography fontWeight="bold">{product.name}</Typography>
+                  </TableCell>
 
-                  <td>
-                    {
-                      product.brand
-                    }
-                  </td>
+                  <TableCell>{product.brand}</TableCell>
 
-                  <td>
-                    ₹
-                    {
-                      product.price
-                    }
-                  </td>
+                  <TableCell>
+                    <Typography color="success.main" fontWeight="bold">
+                      ₹{product.price}
+                    </Typography>
+                  </TableCell>
 
-                  <td>
-                    {
-                      product.stockQuantity
-                    }
-                  </td>
-
-                  <td>
-                    {
-                      product
-                        .category
-                        ?.name
-                    }
-                  </td>
-
-                  <td>
-                    <button
-                      onClick={() =>
-                        handleEdit(
-                          product
-                        )
-                      }
-                      style={{
-                        background:
-                          "#2563eb",
-                        color:
-                          "white",
-                        border:
-                          "none",
-                        padding:
-                          "6px 12px",
-                        marginRight:
-                          "5px",
-                      }}
+                  {/* ✅ Color stock quantity based on level */}
+                  <TableCell>
+                    <Typography
+                      fontWeight="bold"
+                      color={product.stockQuantity < 5 ? "error.main" : "text.primary"}
                     >
-                      Edit
-                    </button>
+                      {product.stockQuantity}
+                      {product.stockQuantity < 5 && " ⚠️"}
+                    </Typography>
+                  </TableCell>
 
-                    <button
-                      onClick={() =>
-                        handleDelete(
-                          product.id
-                        )
-                      }
-                      style={{
-                        background:
-                          "#dc2626",
-                        color:
-                          "white",
-                        border:
-                          "none",
-                        padding:
-                          "6px 12px",
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              )
+                  <TableCell>{product.category?.name}</TableCell>
+
+                  {/* ✅ Action buttons with icons */}
+                  <TableCell>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        startIcon={<EditIcon />}
+                        onClick={() => handleEdit(product)}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        Edit
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        color="error"
+                        size="small"
+                        startIcon={<DeleteIcon />}
+                        onClick={() => handleDelete(product.id)}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </TableCell>
+
+                </TableRow>
+              ))
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
+
+  </Box>
   );
 }
+

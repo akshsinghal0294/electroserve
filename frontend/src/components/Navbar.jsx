@@ -36,7 +36,7 @@ export default function Navbar() {
           fontWeight: "bold",
         }}
       >
-        ElectroServe
+        Dk Refrigerator
       </Link>
 
       <div
@@ -91,7 +91,7 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <Link
+            {/* <Link
               to="/cart"
               style={{
                 color: "white",
@@ -115,7 +115,7 @@ export default function Navbar() {
                   {cartCount}
                 </span>
               )}
-            </Link>
+            </Link> */}
 
             <Link
               to="/profile"

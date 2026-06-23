@@ -24,9 +24,11 @@ import BookService from "./pages/BookService";
 import Profile from "./pages/Profile";
 
 import Dashboard from "./pages/admin/Dashboard";
-import ManageProducts from "./pages/admin/ManageProducts";
+//import ManageProducts from "./pages/admin/ManageProducts";
 import ManageOrders from "./pages/admin/ManageOrders";
 import ManageBookings from "./pages/admin/ManageBookings";
+import ProductList from "./pages/admin/ProductList";
+import ProductForm from "./pages/admin/ProductForm";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -135,14 +137,11 @@ function AppRoutes() {
           }
         />
 
-        <Route
-          path="/admin/products"
-          element={
-            <AdminRoute>
-              <ManageProducts />
-            </AdminRoute>
-          }
-        />
+      
+
+<Route path="/admin/products" element={<ProductList />} />
+<Route path="/admin/products/add" element={<ProductForm />} />
+<Route path="/admin/products/edit/:id" element={<ProductForm />} />
 
         <Route
           path="/admin/orders"

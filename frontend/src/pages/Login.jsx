@@ -33,7 +33,7 @@ export default function Login() {
 
       await login(email, password);
 
-      navigate("/");
+      navigate("/products");
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -57,7 +57,7 @@ export default function Login() {
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          width: "400px",
+          width: "40/0px",
           padding: "30px",
           border: "1px solid #ddd",
           borderRadius: "10px",
