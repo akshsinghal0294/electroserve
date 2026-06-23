@@ -44,16 +44,20 @@ import {
             email: data.email,
             name: data.name,
             role: data.role,
+            phone: data.phone,
           })
         );
   
         setToken(data.token);
   
+      
         setUser({
           id:data.id,
           email: data.email,
           name: data.name,
           role: data.role,
+          phone: data.phone,
+          
         });
   
         return data;

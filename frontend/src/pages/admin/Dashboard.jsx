@@ -1,570 +1,378 @@
 import { useEffect, useState } from "react";
-import {
-  useNavigate,
-  Link,
-} from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 import axios from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import {
+  Box,
+  Typography,
+  Paper,
+  Chip,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  CircularProgress,
+} from "@mui/material";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import BuildIcon from "@mui/icons-material/Build";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-
   const { user } = useAuth();
 
-  const [orders, setOrders] =
-    useState([]);
-
-  const [bookings, setBookings] =
-    useState([]);
-
-  const [products, setProducts] =
-    useState([]);
-
-  const [loading, setLoading] =
-    useState(true);
+  const [orders, setOrders] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadDashboardData();
   }, []);
 
-  const loadDashboardData =
-    async () => {
-      try {
-        setLoading(true);
-
-        const [
-          ordersRes,
-          bookingsRes,
-          productsRes,
-        ] = await Promise.all([
-          axios.get(
-            "/api/orders/all"
-          ),
-          axios.get(
-            "/api/services/all"
-          ),
-          axios.get(
-            "/api/products"
-          ),
-        ]);
-
-        setOrders(
-          ordersRes.data || []
-        );
-
-        setBookings(
-          bookingsRes.data || []
-        );
-
-        setProducts(
-          productsRes.data || []
-        );
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-  const getStatusColor = (
-    status
-  ) => {
-    switch (status) {
-      case "PENDING":
-        return "#facc15";
-
-      case "CONFIRMED":
-        return "#3b82f6";
-
-      case "SHIPPED":
-        return "#9333ea";
-
-      case "DELIVERED":
-        return "#16a34a";
-
-      case "CANCELLED":
-        return "#dc2626";
-
-      case "IN_PROGRESS":
-        return "#2563eb";
-
-      case "COMPLETED":
-        return "#16a34a";
-
-      default:
-        return "#6b7280";
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+  
+      const ordersRes =
+        await axios.get("/api/orders/all");
+  
+      const bookingsRes =
+        await axios.get("/api/services/all");
+  
+      const productsRes =
+        await axios.get("/api/products");
+  
+      setOrders(ordersRes.data);
+      setBookings(bookingsRes.data);
+      setProducts(productsRes.data);
+  
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const totalRevenue =
-    orders.reduce(
-      (sum, order) =>
-        sum +
-        (order.totalAmount ||
-          0),
-      0
-    );
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "PENDING":   return "#facc15";
+      case "CONFIRMED":   return "#3b82f6";
+      case "SHIPPED":     return "#9333ea";
+      case "DELIVERED":   return "#16a34a";
+      case "CANCELLED":   return "#dc2626";
+      case "IN_PROGRESS": return "#2563eb";
+      case "COMPLETED":   return "#16a34a";
+      default:            return "#6b7280";
+    }
+  };
 
-  const recentOrders =
-    [...orders]
-      .sort(
-        (a, b) =>
-          new Date(
-            b.createdAt
-          ) -
-          new Date(
-            a.createdAt
-          )
-      )
-      .slice(0, 5);
+  const totalRevenue = orders.reduce(
+    (sum, order) => sum + (order.totalAmount || 0), 0
+  );
 
-  const recentBookings =
-    [...bookings]
-      .sort(
-        (a, b) =>
-          new Date(
-            b.createdAt
-          ) -
-          new Date(
-            a.createdAt
-          )
-      )
-      .slice(0, 5);
+  const recentOrders = [...orders]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5);
 
+  const recentBookings = [...bookings]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5);
+
+  // ✅ Loading state with MUI spinner
   if (loading) {
     return (
-      <div
-        style={{
-          textAlign:
-            "center",
-          padding: "50px",
-        }}
-      >
-        <h2>
+      <Box sx={{ textAlign: "center", mt: 10 }}>
+        <CircularProgress size={50} />
+        <Typography mt={2} color="text.secondary">
           Loading Dashboard...
-        </h2>
-      </div>
+        </Typography>
+      </Box>
     );
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background:
-          "#f3f4f6",
-      }}
-    >
-      {/* Header */}
+    <Box sx={{ minHeight: "100vh", bgcolor: "#f3f4f6" }}>
 
-      <div
-        style={{
-          background:
-            "#111827",
+      {/* ====== HEADER ====== */}
+      <Paper
+        elevation={4}
+        square
+        sx={{
+          bgcolor: "#111827",
           color: "white",
-          padding:
-            "20px 30px",
+          px: 4,
+          py: 2.5,
           display: "flex",
-          justifyContent:
-            "space-between",
-          alignItems:
-            "center",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <div>
-          <h1
-            style={{
-              margin: 0,
-            }}
-          >
+        <Box>
+          <Typography variant="h5" fontWeight="bold">
             Admin Dashboard
-          </h1>
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 0.5, color: "#9ca3af" }}>
+            Welcome, {user?.name}
+          </Typography>
+        </Box>
 
-          <p
-            style={{
-              margin:
-                "5px 0 0 0",
-            }}
-          >
-            Welcome,{" "}
-            {
-              user?.name
-            }
-          </p>
-        </div>
-
-        <Link
+        <Button
+          component={Link}
           to="/"
-          style={{
-            color:
-              "white",
+          variant="outlined"
+          sx={{
+            color: "white",
+            borderColor: "white",
+            "&:hover": { borderColor: "#9ca3af", bgcolor: "transparent" },
           }}
         >
           Back To Home
-        </Link>
-      </div>
+        </Button>
+      </Paper>
 
-      <div
-        style={{
-          padding: "30px",
-        }}
-      >
-        {/* Stats Cards */}
+      <Box sx={{ p: 4 }}>
 
-        <div
-          style={{
+        {/* ====== STATS CARDS ====== */}
+        <Box
+          sx={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit,minmax(220px,1fr))",
-            gap: "20px",
-            marginBottom:
-              "30px",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(4, 1fr)",
+            },
+            gap: 3,
+            mb: 4,
           }}
         >
-          <div
-            style={{
-              background:
-                "white",
-              padding:
-                "20px",
-              borderRadius:
-                "10px",
-              boxShadow:
-                "0 2px 8px rgba(0,0,0,0.1)",
-            }}
+          {[
+            {
+              label: "Total Orders",
+              value: orders.length,
+              icon: <ShoppingBagIcon />,
+              color: "#3b82f6",
+            },
+            {
+              label: "Total Bookings",
+              value: bookings.length,
+              icon: <BuildIcon />,
+              color: "#8b5cf6",
+            },
+            {
+              label: "Total Products",
+              value: products.length,
+              icon: <InventoryIcon />,
+              color: "#10b981",
+            },
+            {
+              label: "Total Revenue",
+              value: `₹${totalRevenue.toFixed(2)}`,
+              icon: <CurrencyRupeeIcon />,
+              color: "#f59e0b",
+            },
+          ].map((stat) => (
+            <Paper key={stat.label} elevation={2} sx={{ p: 3, borderRadius: 3 }}>
+              <Box
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: "50%",
+                  bgcolor: stat.color + "22",
+                  color: stat.color,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  mb: 1.5,
+                }}
+              >
+                {stat.icon}
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                {stat.label}
+              </Typography>
+              <Typography variant="h5" fontWeight="bold" mt={0.5}>
+                {stat.value}
+              </Typography>
+            </Paper>
+          ))}
+        </Box>
+
+        {/* ====== QUICK ACTION BUTTONS ====== */}
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 4 }}>
+          <Button
+            variant="contained"
+            startIcon={<InventoryIcon />}
+            onClick={() => navigate("/admin/products")}
+            sx={{ borderRadius: 2 }}
           >
-            <h3>
-              Total Orders
-            </h3>
-            <h2>
-              {
-                orders.length
-              }
-            </h2>
-          </div>
+            Manage Products
+          </Button>
 
-          <div
-            style={{
-              background:
-                "white",
-              padding:
-                "20px",
-              borderRadius:
-                "10px",
-              boxShadow:
-                "0 2px 8px rgba(0,0,0,0.1)",
-            }}
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<ShoppingBagIcon />}
+            onClick={() => navigate("/admin/orders")}
+            sx={{ borderRadius: 2 }}
           >
-            <h3>
-              Total
-              Bookings
-            </h3>
-            <h2>
-              {
-                bookings.length
-              }
-            </h2>
-          </div>
+            Manage Orders
+          </Button>
 
-          <div
-            style={{
-              background:
-                "white",
-              padding:
-                "20px",
-              borderRadius:
-                "10px",
-              boxShadow:
-                "0 2px 8px rgba(0,0,0,0.1)",
-            }}
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<BuildIcon />}
+            onClick={() => navigate("/admin/bookings")}
+            sx={{ borderRadius: 2 }}
           >
-            <h3>
-              Total
-              Products
-            </h3>
-            <h2>
-              {
-                products.length
-              }
-            </h2>
-          </div>
+            Manage Bookings
+          </Button>
+        </Box>
 
-          <div
-            style={{
-              background:
-                "white",
-              padding:
-                "20px",
-              borderRadius:
-                "10px",
-              boxShadow:
-                "0 2px 8px rgba(0,0,0,0.1)",
-            }}
-          >
-            <h3>
-              Total
-              Revenue
-            </h3>
-            <h2>
-              ₹
-              {totalRevenue.toFixed(
-                2
-              )}
-            </h2>
-          </div>
-        </div>
+        {/* ====== RECENT ORDERS TABLE ====== */}
+        <Paper elevation={2} sx={{ borderRadius: 3, mb: 4 }}>
+          <Box sx={{ p: 3, pb: 1 }}>
+            <Typography variant="h6" fontWeight="bold">
+              Recent Orders
+            </Typography>
+          </Box>
 
-        {/* Quick Actions */}
+          <TableContainer>
+            <Table>
+              <TableHead sx={{ bgcolor: "#f9fafb" }}>
+                <TableRow>
+                  {["Order ID", "Amount", "Status", "Date"].map((col) => (
+                    <TableCell
+                      key={col}
+                      sx={{ fontWeight: "bold", color: "#374151" }}
+                    >
+                      {col}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "15px",
-            flexWrap:
-              "wrap",
-            marginBottom:
-              "30px",
-          }}
-        >
-          <button
-            onClick={() =>
-              navigate(
-                "/admin/products"
-              )
-            }
-          >
-            Manage
-            Products
-          </button>
+              <TableBody>
+                {recentOrders.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      align="center"
+                      sx={{ py: 4, color: "text.secondary" }}
+                    >
+                      No orders found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  recentOrders.map((order) => (
+                    <TableRow
+                      key={order.id}
+                      sx={{ "&:hover": { bgcolor: "#f3f4f6" } }}
+                    >
+                      <TableCell>
+                        <Typography fontWeight="bold">#{order.id}</Typography>
+                      </TableCell>
 
-          <button
-            onClick={() =>
-              navigate(
-                "/admin/orders"
-              )
-            }
-          >
-            Manage
-            Orders
-          </button>
+                      <TableCell>₹{order.totalAmount}</TableCell>
 
-          <button
-            onClick={() =>
-              navigate(
-                "/admin/bookings"
-              )
-            }
-          >
-            Manage
-            Bookings
-          </button>
-        </div>
+                      <TableCell>
+                        <Chip
+                          label={order.status}
+                          size="small"
+                          sx={{
+                            bgcolor: getStatusColor(order.status),
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: "11px",
+                          }}
+                        />
+                      </TableCell>
 
-        {/* Recent Orders */}
+                      <TableCell>
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
 
-        <div
-          style={{
-            background:
-              "white",
-            padding:
-              "20px",
-            borderRadius:
-              "10px",
-            marginBottom:
-              "30px",
-            overflowX:
-              "auto",
-          }}
-        >
-          <h2>
-            Recent Orders
-          </h2>
+        {/* ====== RECENT BOOKINGS TABLE ====== */}
+        <Paper elevation={2} sx={{ borderRadius: 3 }}>
+          <Box sx={{ p: 3, pb: 1 }}>
+            <Typography variant="h6" fontWeight="bold">
+              Recent Bookings
+            </Typography>
+          </Box>
 
-          <table
-            style={{
-              width:
-                "100%",
-              borderCollapse:
-                "collapse",
-            }}
-          >
-            <thead>
-              <tr>
-                <th>
-                  Order
-                  ID
-                </th>
-                <th>
-                  Amount
-                </th>
-                <th>
-                  Status
-                </th>
-                <th>
-                  Date
-                </th>
-              </tr>
-            </thead>
+          <TableContainer>
+            <Table>
+              <TableHead sx={{ bgcolor: "#f9fafb" }}>
+                <TableRow>
+                  {["Booking ID", "Service", "Date", "Status"].map((col) => (
+                    <TableCell
+                      key={col}
+                      sx={{ fontWeight: "bold", color: "#374151" }}
+                    >
+                      {col}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
 
-            <tbody>
-              {recentOrders.map(
-                (
-                  order
-                ) => (
-                  <tr
-                    key={
-                      order.id
-                    }
-                  >
-                    <td>
-                      #
-                      {
-                        order.id
-                      }
-                    </td>
+              <TableBody>
+                {recentBookings.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      align="center"
+                      sx={{ py: 4, color: "text.secondary" }}
+                    >
+                      No bookings found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  recentBookings.map((booking) => (
+                    <TableRow
+                      key={booking.id}
+                      sx={{ "&:hover": { bgcolor: "#f3f4f6" } }}
+                    >
+                      <TableCell>
+                        <Typography fontWeight="bold">#{booking.id}</Typography>
+                      </TableCell>
 
-                    <td>
-                      ₹
-                      {
-                        order.totalAmount
-                      }
-                    </td>
+                      <TableCell>{booking.serviceType}</TableCell>
 
-                    <td>
-                      <span
-                        style={{
-                          background:
-                            getStatusColor(
-                              order.status
-                            ),
-                          color:
-                            "white",
-                          padding:
-                            "4px 10px",
-                          borderRadius:
-                            "15px",
-                        }}
-                      >
-                        {
-                          order.status
-                        }
-                      </span>
-                    </td>
+                      <TableCell>{booking.appointmentDate}</TableCell>
 
-                    <td>
-                      {new Date(
-                        order.createdAt
-                      ).toLocaleDateString()}
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-        </div>
+                      <TableCell>
+                        <Chip
+                          label={booking.status}
+                          size="small"
+                          sx={{
+                            bgcolor: getStatusColor(booking.status),
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: "11px",
+                          }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
 
-        {/* Recent Bookings */}
-
-        <div
-          style={{
-            background:
-              "white",
-            padding:
-              "20px",
-            borderRadius:
-              "10px",
-            overflowX:
-              "auto",
-          }}
-        >
-          <h2>
-            Recent
-            Bookings
-          </h2>
-
-          <table
-            style={{
-              width:
-                "100%",
-              borderCollapse:
-                "collapse",
-            }}
-          >
-            <thead>
-              <tr>
-                <th>
-                  Booking
-                  ID
-                </th>
-                <th>
-                  Service
-                </th>
-                <th>
-                  Date
-                </th>
-                <th>
-                  Status
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {recentBookings.map(
-                (
-                  booking
-                ) => (
-                  <tr
-                    key={
-                      booking.id
-                    }
-                  >
-                    <td>
-                      #
-                      {
-                        booking.id
-                      }
-                    </td>
-
-                    <td>
-                      {
-                        booking.serviceType
-                      }
-                    </td>
-
-                    <td>
-                      {
-                        booking.appointmentDate
-                      }
-                    </td>
-
-                    <td>
-                      <span
-                        style={{
-                          background:
-                            getStatusColor(
-                              booking.status
-                            ),
-                          color:
-                            "white",
-                          padding:
-                            "4px 10px",
-                          borderRadius:
-                            "15px",
-                        }}
-                      >
-                        {
-                          booking.status
-                        }
-                      </span>
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

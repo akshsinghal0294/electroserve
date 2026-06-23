@@ -1,5 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import ServiceCard from "../components/ServiceCard";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
+  Typography,
+  Button,
+  Box,
+} from "@mui/material";
 
 export default function Services() {
   const navigate = useNavigate();
@@ -7,95 +15,144 @@ export default function Services() {
   const services = [
     {
       title: "Refrigerator Repair",
-      description:
-        "Expert fridge repair and maintenance service",
+      description: "Expert fridge repair and maintenance service",
       price: 299,
-      icon: "❄️",
+      image: "/images/refri.jpg",
     },
     {
       title: "AC Service",
-      description:
-        "Complete AC servicing and repair",
+      description: "Complete AC servicing and repair",
       price: 399,
-      icon: "❄️",
+      image: "/images/ac.jpg",
     },
     {
       title: "TV Repair",
-      description:
-        "All brands TV repair service",
+      description: "All brands TV repair service",
       price: 199,
-      icon: "📺",
+      image: "/images/tv.jpg",
     },
     {
       title: "Washing Machine Repair",
-      description:
-        "Washing machine repair and maintenance",
+      description: "Washing machine repair and maintenance",
       price: 299,
-      icon: "🧺",
+      image: "/images/wm.jpg",
     },
     {
       title: "Microwave Repair",
-      description:
-        "Microwave oven repair and service",
+      description: "Microwave oven repair and service",
       price: 199,
-      icon: "🔥",
+      image: "/images/microwave.jpg",
     },
     {
       title: "Other Appliances",
-      description:
-        "Any other appliance repair service",
+      description: "Any other appliance repair service",
       price: 149,
-      icon: "🔧",
+      image: "/images/otherAppliances.jpg",
     },
   ];
 
   return (
     <div>
+      {/* Hero Section */}
       <section
         style={{
           background: "#f3f4f6",
-          padding: "60px 20px",
+          padding: "5px 20px",
           textAlign: "center",
         }}
       >
-        <h1>Expert Repair Services</h1>
+       
 
-        <p>
-          Quick and reliable repair
-          for all your appliances
-        </p>
+        <Typography
+          variant="h4"
+          align="center"
+          color="text.primary"
+        >
+          Expert Repair Services
+        </Typography>
+
+        <Typography
+        sx={{
+          mt: 2,
+        }}
+          align="center"
+          color="text.secondry"
+        >
+        Quick and reliable repair for all your appliances
+        </Typography>
+
+     
       </section>
 
-      <section
-        style={{
-          padding: "40px 20px",
-        }}
-      >
-        <div
-          style={{
+      {/* Services Grid */}
+      <section style={{ padding: "40px 20px" }}>
+        <Box
+          sx={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fill,minmax(280px,1fr))",
-            gap: "20px",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
+            },
+            gap: 3,
           }}
         >
           {services.map((service) => (
-            <div
+            <Card
               key={service.title}
               onClick={() =>
                 navigate(
-                  `/book-service?service=${encodeURIComponent(
-                    service.title
-                  )}`
+                  `/book-service?service=${encodeURIComponent(service.title)}`
                 )
               }
+              sx={{
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: 6,
+                },
+              }}
             >
-              <ServiceCard
-                service={service}
+              <CardMedia
+                component="img"
+                height="180"
+                image={service.image}
+                alt={service.title}
+                sx={{ objectFit: "cover" }}
               />
-            </div>
+
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  {service.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {service.description}
+                </Typography>
+              </CardContent>
+
+              <CardActions sx={{ px: 2, pb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Typography variant="h6" color="primary" fontWeight="bold">
+                    ₹{service.price}
+                  </Typography>
+                  <Button variant="contained" size="small">
+                    Book Now
+                  </Button>
+                </Box>
+              </CardActions>
+            </Card>
           ))}
-        </div>
+        </Box>
       </section>
     </div>
   );

@@ -47,13 +47,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
 
                     .requestMatchers(
+                            "/error",
                             "/api/auth/register",
                             "/api/auth/login")
                     .permitAll()
 
                     .requestMatchers(
                             org.springframework.http.HttpMethod.GET,
-                            "/api/products",
+                             "/api/products",
                             "/api/products/**",
                             "/api/services/**" ,
                             "/api/orders/**" ,

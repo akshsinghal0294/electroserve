@@ -71,7 +71,7 @@ export default function Home() {
 
       <section
         style={{
-          padding: "80px 20px",
+          padding: "10px 10px",
           textAlign: "center",
           background: "#f3f4f6",
         }}

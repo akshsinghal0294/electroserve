@@ -1,6 +1,14 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+} from "@mui/material";
+import Link from "@mui/material/Link";
+
 
 export default function Login() {
   const { login } = useAuth();
@@ -17,6 +25,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+   
+
     try {
       setLoading(true);
       setError("");
@@ -27,7 +37,7 @@ export default function Login() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Invalid email or password"
+        "Invalid email or password"
       );
     } finally {
       setLoading(false);
@@ -35,42 +45,42 @@ export default function Login() {
   };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         minHeight: "80vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
-      <form
+      <Box
+        component="form"
         onSubmit={handleSubmit}
-        style={{
+        sx={{
           width: "400px",
           padding: "30px",
           border: "1px solid #ddd",
           borderRadius: "10px",
           boxShadow:
             "0 2px 10px rgba(0,0,0,0.1)",
-          background: "#fff",
+            bgcolor: "#fff",  
         }}
       >
-        <h1
-          style={{
-            textAlign: "center",
-            marginBottom: "20px",
-          }}
+        <Typography
+          variant="h4"
+          align="center"
+          color="text.primary"
         >
-          ElectroServe
-        </h1>
+          Dk Refrigerator !!
+        </Typography>
 
-        <h2
-          style={{
-            textAlign: "center",
-          }}
+        <Typography
+          variant="h5"
+          align="center"
+          color="text.secondary"
         >
           Login
-        </h2>
+        </Typography>
 
         {error && (
           <p
@@ -83,65 +93,66 @@ export default function Login() {
           </p>
         )}
 
-        <input
+        <TextField
+          fullWidth
+          label="Email"
           type="email"
-          placeholder="Email"
+          autoComplete="off"
           value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
+
+          onChange={(e) => setEmail(e.target.value)}
+          margin="normal"
           required
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginBottom: "15px",
-          }}
         />
 
-        <input
+        <TextField
+          fullWidth
+          label="Password"
           type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
           required
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginBottom: "15px",
-          }}
+          autoComplete="off"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          margin="normal"
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "100%",
-            padding: "10px",
-            background: "#2563eb",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          {loading
+
+        <Button
+        type="submit"
+        variant="contained"
+        color="success"
+  
+        fullWidth
+        disabled={loading}
+        sx={{
+          mt: 2,
+          py: 1.5,
+          textTransform: "none",
+        }}
+      >
+        {loading
             ? "Logging in..."
             : "Login"}
-        </button>
+      </Button>
 
-        <p
-          style={{
-            marginTop: "15px",
-            textAlign: "center",
-          }}
+
+      <Typography
+        align="center"
+        sx={{
+          mt: 2,
+        }}
+      >
+        Don't have an account ?{" "}
+        <Link
+          component={RouterLink}
+          to="/register"
+          underline="hover"
         >
-          Don't have an account?{" "}
-          <Link to="/register">
-            Register
-          </Link>
-        </p>
-      </form>
-    </div>
+          Register
+        </Link>
+      </Typography>
+
+      </Box>
+    </Box>
   );
 }
