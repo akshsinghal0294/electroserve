@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: electroserve-backend
-    env: java
-    rootDir: backend
-    buildCommand: mvn clean install
-    startCommand: java -jar target/*.jar
