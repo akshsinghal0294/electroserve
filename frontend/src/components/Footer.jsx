@@ -56,9 +56,10 @@ export default function Footer() {
           </Typography>
           <Stack spacing={1}>
             {[
-              { label: "Home", to: "/" },
+             
               { label: "Products", to: "/products" },
               { label: "Services", to: "/services" },
+              { label: "Profile", to: "/profile" },
      
             ].map((item) => (
               <Link
