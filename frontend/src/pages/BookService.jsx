@@ -182,9 +182,10 @@ export default function BookService() {
             <DatePicker
               label="Appointment Date"
               value={appointmentDate}
-              onChange={(e) =>
-                setAppointmentDate(e.target.value)
-              }
+              // onChange={(e) =>
+              //   setAppointmentDate(e.target.value)
+              // }
+              onChange={(newValue) => setAppointmentDate(newValue)}
               disablePast
               slotProps={{
                 textField: {

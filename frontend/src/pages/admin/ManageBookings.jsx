@@ -157,7 +157,7 @@ export default function ManageBookings() {
 
         <Button
           component={Link}
-          to="/admin/products/add"
+          to="/admin/dashboard"
           variant="outlined"
           sx={{
             color: "white",
