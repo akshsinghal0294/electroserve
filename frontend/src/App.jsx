@@ -54,7 +54,7 @@ function AppRoutes() {
       <Routes>
 
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Products />} />
 
         <Route
           path="/login"
@@ -82,7 +82,7 @@ function AppRoutes() {
         />
 
         {/* Protected Routes */}
-        <Route
+        {/* <Route
           path="/cart"
           element={
             <ProtectedRoute>
@@ -98,16 +98,16 @@ function AppRoutes() {
               <Checkout />
             </ProtectedRoute>
           }
-        />
+        /> */}
 
-        <Route
+        {/* <Route
           path="/orders"
           element={
             <ProtectedRoute>
               <Orders />
             </ProtectedRoute>
           }
-        />
+        /> */}
 
         <Route
           path="/book-service"
@@ -143,14 +143,14 @@ function AppRoutes() {
 <Route path="/admin/products/add" element={<ProductForm />} />
 <Route path="/admin/products/edit/:id" element={<ProductForm />} />
 
-        <Route
+        {/* <Route
           path="/admin/orders"
           element={
             <AdminRoute>
               <ManageOrders />
             </AdminRoute>
           }
-        />
+        /> */}
 
         <Route
           path="/admin/bookings"
