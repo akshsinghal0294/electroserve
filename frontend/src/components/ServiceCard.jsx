@@ -1,49 +1,65 @@
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Typography,
+  Button,
+  Box,
+} from "@mui/material";
 
-export default function ServiceCard({
-  service,
-}) {
+export default function ServiceCard({ service }) {
   const navigate = useNavigate();
 
   return (
-    <div
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: "10px",
-        padding: "20px",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+    <Card
+      onClick={() =>
+        navigate(`/book-service?service=${encodeURIComponent(service.title)}`)
+      }
+      sx={{
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        transition: "transform 0.2s, box-shadow 0.2s",
+        "&:hover": { transform: "translateY(-4px)", boxShadow: 6 },
       }}
     >
-      <div
-        style={{
-          fontSize: "50px",
-          textAlign: "center",
-        }}
-      >
-        {service.icon}
-      </div>
+      <CardMedia
+        component="img"
+        height="180"
+        image={service.image}
+        alt={service.title}
+        sx={{ objectFit: "cover" }}
+      />
 
-      <h3>{service.title}</h3>
+      <CardContent sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          {service.title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {service.description}
+        </Typography>
+      </CardContent>
 
-      <p>{service.description}</p>
-
-      <h4>Starting ₹{service.price}</h4>
-
-      <button
-        onClick={() =>
-          navigate("/book-service")
-        }
-        style={{
-          width: "100%",
-          padding: "10px",
-          border: "none",
-          borderRadius: "5px",
-          background: "#2563eb",
-          color: "white",
-        }}
-      >
-        Book Now
-      </button>
-    </div>
+      <CardActions sx={{ px: 2, pb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <Typography variant="h6" color="primary" fontWeight="bold">
+            ₹{service.price}
+          </Typography>
+          <Button variant="contained" size="small">
+            Book Now
+          </Button>
+        </Box>
+      </CardActions>
+    </Card>
   );
 }

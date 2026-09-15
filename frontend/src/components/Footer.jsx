@@ -7,40 +7,55 @@ import {
   Stack,
 } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
-import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 
 export default function Footer() {
   return (
     <Box
       component="footer"
       sx={{
-        backgroundColor: "#111827",
+        background: "linear-gradient(90deg, #0f172a 0%, #111827 60%, #1e293b 100%)",
         color: "white",
-       // pt: 4,
+        borderTop: "3px solid",
+        borderColor: "primary.main",
+        pt: { xs: 4, sm: 5 },
         pb: 2,
-        mt: 4,
+        mt: 6,
       }}
     >
       <Box
         sx={{
           maxWidth: "1200px",
           margin: "0 auto",
-          px: 3,
+          px: { xs: 2.5, sm: 3 },
           display: "grid",
           gridTemplateColumns: {
             xs: "1fr",
             sm: "repeat(2, 1fr)",
             md: "repeat(3, 1fr)",
           },
-          gap: 4,
+          gap: { xs: 3, sm: 4 },
+          textAlign: { xs: "center", sm: "left" },
         }}
       >
         {/* Company Info */}
         <Box>
-          <Typography variant="h5" fontWeight="bold" color="white" gutterBottom>
-            🔧 DK Refrigerator
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color="white"
+            gutterBottom
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.75,
+              justifyContent: { xs: "center", sm: "flex-start" },
+            }}
+          >
+            <ElectricBoltIcon sx={{ color: "warning.main" }} />
+            DK Refrigerator
           </Typography>
           <Typography variant="body2" sx={{ color: "#9ca3af", lineHeight: 1.8 }}>
             Repair services and genuine spare parts
@@ -54,13 +69,11 @@ export default function Footer() {
           <Typography variant="h6" fontWeight="bold" color="white" gutterBottom>
             Quick Links
           </Typography>
-          <Stack spacing={1}>
+          <Stack spacing={1} alignItems={{ xs: "center", sm: "flex-start" }}>
             {[
-             
               { label: "Products", to: "/products" },
               { label: "Services", to: "/services" },
               { label: "Profile", to: "/profile" },
-     
             ].map((item) => (
               <Link
                 key={item.label}
@@ -70,7 +83,7 @@ export default function Footer() {
                 sx={{
                   color: "#9ca3af",
                   fontSize: "0.9rem",
-                  "&:hover": { color: "white" },
+                  "&:hover": { color: "warning.main" },
                   transition: "color 0.2s",
                 }}
               >
@@ -85,24 +98,22 @@ export default function Footer() {
           <Typography variant="h6" fontWeight="bold" color="white" gutterBottom>
             Contact Us
           </Typography>
-          <Stack spacing={2}>
+          <Stack spacing={2} alignItems={{ xs: "center", sm: "flex-start" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <PhoneIcon sx={{ color: "#3b82f6", fontSize: 20 }} />
+              <PhoneIcon sx={{ color: "#60a5fa", fontSize: 20 }} />
               <Typography variant="body2" sx={{ color: "#9ca3af" }}>
                 +91 98765 43210
               </Typography>
             </Box>
 
-           
-
             <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
-              <LocationOnIcon sx={{ color: "#3b82f6", fontSize: 20 }} />
+              <LocationOnIcon sx={{ color: "#60a5fa", fontSize: 20 }} />
               <Typography variant="body2" sx={{ color: "#9ca3af" }}>
-                123, Repair Street, 
+                123, Repair Street,
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <AccessTimeIcon sx={{ color: "#3b82f6", fontSize: 20 }} />
+              <AccessTimeIcon sx={{ color: "#60a5fa", fontSize: 20 }} />
               <Typography variant="body2" sx={{ color: "#9ca3af" }}>
                 Mon - Sat: 9:00 AM - 6:00 PM
               </Typography>

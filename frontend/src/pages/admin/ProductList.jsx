@@ -20,8 +20,8 @@ export default function ProductList() {
   }, []);
 
   const loadProducts = async () => {
-    const res = await axios.get("/api/products");
-    setProducts(res.data || []);
+    const res = await axios.get("/api/products?size=1000");
+    setProducts(res.data?.content || []);
   };
 
   const handleDelete = async (id) => {

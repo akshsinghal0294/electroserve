@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import { useNotification } from "../../context/NotificationContext";
 import {
   Box,
   Typography,
@@ -31,6 +32,7 @@ export default function ManageProducts() {
   const navigate = useNavigate();
 
   const { user } = useAuth();
+  const { notify } = useNotification();
 
   const [products, setProducts] =
     useState([]);
@@ -70,12 +72,12 @@ export default function ManageProducts() {
         productsRes,
         categoriesRes,
       ] = await Promise.all([
-        axios.get("/api/products"),
+        axios.get("/api/products?size=1000"),
         axios.get("/api/categories"),
       ]);
 
       setProducts(
-        productsRes.data || []
+        productsRes.data?.content || []
       );
 
       setCategories(
@@ -83,6 +85,7 @@ export default function ManageProducts() {
       );
     } catch (error) {
       console.error(error);
+      notify("Failed to load products.", "error");
     } finally {
       setLoading(false);
     }
@@ -150,8 +153,9 @@ export default function ManageProducts() {
       resetForm();
     } catch (error) {
       console.error(error);
-      alert(
-        "Failed to save product"
+      notify(
+        "Failed to save product",
+        "error"
       );
     }
   };
@@ -196,8 +200,9 @@ export default function ManageProducts() {
         await loadData();
       } catch (error) {
         console.error(error);
-        alert(
-          "Failed to delete product"
+        notify(
+          "Failed to delete product",
+          "error"
         );
       }
     };

@@ -13,28 +13,18 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
 
-    console.log("================================");
-    console.log("REQUEST URL:", config.url);
-    console.log("TOKEN:", token);
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
 
-      console.log(
-        "AUTH HEADER:",
-        config.headers.Authorization
-      );
-    } else {
-      console.log("NO TOKEN FOUND");
+    if (import.meta.env.DEV) {
+      console.log("REQUEST:", config.method?.toUpperCase(), config.url);
     }
 
     return config;
   },
   (error) => {
-    console.error(
-      "REQUEST ERROR:",
-      error
-    );
+    console.error("REQUEST ERROR:", error);
 
     return Promise.reject(error);
   }
@@ -43,10 +33,9 @@ api.interceptors.request.use(
 // Response Interceptor
 api.interceptors.response.use(
   (response) => {
-    console.log(
-      "SUCCESS:",
-      response.config.url
-    );
+    if (import.meta.env.DEV) {
+      console.log("SUCCESS:", response.config.url);
+    }
 
     return response;
   },
@@ -61,10 +50,6 @@ api.interceptors.response.use(
       error.response &&
       error.response.status === 401
     ) {
-      console.log(
-        "401 Unauthorized - Logging out"
-      );
-
       localStorage.clear();
 
       window.location.href =

@@ -1,7 +1,7 @@
 package com.electroserve.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.electroserve.model.Product;
@@ -16,8 +16,8 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     public Product getProductById(Long id) {
@@ -26,13 +26,13 @@ public class ProductService {
                         new RuntimeException("Product not found"));
     }
 
-    public List<Product> getProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+    public Page<Product> getProductsByCategory(Long categoryId, Pageable pageable) {
+        return productRepository.findByCategoryId(categoryId, pageable);
     }
 
-    public List<Product> searchProducts(String keyword) {
+    public Page<Product> searchProducts(String keyword, Pageable pageable) {
         return productRepository
-                .findByNameContainingIgnoreCase(keyword);
+                .findByNameContainingIgnoreCase(keyword, pageable);
     }
 
     public Product addProduct(Product product) {

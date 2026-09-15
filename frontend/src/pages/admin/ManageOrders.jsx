@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import { useNotification } from "../../context/NotificationContext";
 
 export default function ManageOrders() {
   const navigate = useNavigate();
 
   const { user } = useAuth();
+  const { notify } = useNotification();
 
   const [orders, setOrders] =
     useState([]);
@@ -36,6 +38,7 @@ export default function ManageOrders() {
       );
     } catch (error) {
       console.error(error);
+      notify("Failed to load orders.", "error");
     } finally {
       setLoading(false);
     }
@@ -56,13 +59,15 @@ export default function ManageOrders() {
 
         await loadOrders();
 
-        alert(
-          "Order status updated successfully"
+        notify(
+          "Order status updated successfully",
+          "success"
         );
       } catch (error) {
         console.error(error);
-        alert(
-          "Failed to update order status"
+        notify(
+          "Failed to update order status",
+          "error"
         );
       }
     };

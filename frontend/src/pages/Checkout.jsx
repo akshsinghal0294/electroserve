@@ -5,11 +5,14 @@ import api from "../services/api";
 
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useNotification } from "../context/NotificationContext";
 
 export default function Checkout() {
   const navigate = useNavigate();
 
   const { user } = useAuth();
+
+  const { notify } = useNotification();
 
   const {
     cartItems,
@@ -72,14 +75,19 @@ Phone: ${phone}
 
       await clearCart(user.id);
 
-      alert(
-        "Order placed successfully"
+      notify(
+        "Order placed successfully",
+        "success"
       );
 
       navigate("/orders");
     } catch (err) {
       setError(
         "Failed to place order"
+      );
+      notify(
+        "Failed to place order",
+        "error"
       );
     } finally {
       setLoading(false);

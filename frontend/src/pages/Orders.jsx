@@ -8,11 +8,14 @@ import {
   import api from "../services/api";
   
   import { useAuth } from "../context/AuthContext";
-  
+  import { useNotification } from "../context/NotificationContext";
+
   export default function Orders() {
     const navigate = useNavigate();
-  
+
     const { user } = useAuth();
+
+    const { notify } = useNotification();
   
     const [orders, setOrders] =
       useState([]);
@@ -48,6 +51,7 @@ import {
           setOrders(sorted);
         } catch (error) {
           console.error(error);
+          notify("Failed to load orders.", "error");
         } finally {
           setLoading(false);
         }

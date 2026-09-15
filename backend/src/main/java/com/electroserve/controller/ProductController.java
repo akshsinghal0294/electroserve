@@ -1,7 +1,9 @@
 package com.electroserve.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +13,6 @@ import com.electroserve.service.ProductService;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
 
     private final ProductService productService;
@@ -20,10 +21,18 @@ public class ProductController {
         this.productService = productService;
     }
 
+    private Pageable buildPageable(int page, int size, String sort) {
+        return PageRequest.of(page, size, Sort.by(sort));
+    }
+
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<Page<Product>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(defaultValue = "id") String sort) {
+
         return ResponseEntity.ok(
-                productService.getAllProducts());
+                productService.getAllProducts(buildPageable(page, size, sort)));
     }
 
     @GetMapping("/{id}")
@@ -35,19 +44,25 @@ public class ProductController {
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<Product>> getProductsByCategory(
-            @PathVariable Long categoryId) {
+    public ResponseEntity<Page<Product>> getProductsByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(defaultValue = "id") String sort) {
 
         return ResponseEntity.ok(
-                productService.getProductsByCategory(categoryId));
+                productService.getProductsByCategory(categoryId, buildPageable(page, size, sort)));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Product>> searchProducts(
-            @RequestParam String keyword) {
+    public ResponseEntity<Page<Product>> searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(defaultValue = "id") String sort) {
 
         return ResponseEntity.ok(
-                productService.searchProducts(keyword));
+                productService.searchProducts(keyword, buildPageable(page, size, sort)));
     }
 
     @PostMapping

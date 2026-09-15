@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useNotification } from "../context/NotificationContext";
 import {
   Box,
   Typography,
@@ -26,7 +27,8 @@ export default function Profile() {
   const [orders, setOrders] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
- console.log("user", user)
+  const { notify } = useNotification();
+
   useEffect(() => {
     if (user?.id) loadData();
   }, [user]);
@@ -42,6 +44,7 @@ export default function Profile() {
       setBookings(bookingsRes.data || []);
     } catch (error) {
       console.error(error);
+      notify("Failed to load your profile data.", "error");
     } finally {
       setLoading(false);
     }

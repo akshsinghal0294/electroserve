@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useNotification } from "../context/NotificationContext";
 import {
   Box,
   Typography,
@@ -25,24 +26,25 @@ export default function BookService() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const { notify } = useNotification();
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported");
+      notify("Geolocation is not supported", "error");
       return;
     }
-  
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-  
+
         const mapLink =
           `https://maps.google.com/?q=${latitude},${longitude}`;
-  
+
         setAddress(mapLink);
       },
       (error) => {
         console.error(error);
-        alert("Unable to get location");
+        notify("Unable to get location", "error");
       }
     );
   };
@@ -52,8 +54,6 @@ export default function BookService() {
   const [serviceType, setServiceType] = useState(
     params.get("service") || "Refrigerator"
   );
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
 
   const [applianceType, setApplianceType] = useState("");
   const [problemDescription, setProblemDescription] = useState("");
@@ -76,6 +76,7 @@ export default function BookService() {
       setAvailableSlots(response.data);
     } catch (error) {
       console.error(error);
+      notify("Failed to load available time slots.", "error");
     }
   };
 
@@ -87,12 +88,12 @@ export default function BookService() {
         serviceType,
         applianceType,
         problemDescription,
-        appointmentDate,
+        appointmentDate: appointmentDate.format("YYYY-MM-DD"),
         timeSlot,
         address,
       };
 
-     
+
 
       await api.post("/api/services/book", booking, {
         params: { userId: user.id },
@@ -102,15 +103,14 @@ export default function BookService() {
       setTimeout(() => navigate("/profile"), 2000);
     } catch (error) {
       console.error(error);
+      notify("Failed to book service.", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const today = new Date().toISOString().split("T")[0];
- 
   return (
-    <Box sx={{ margin: "0 auto", width: 600 }}>
+    <Box sx={{ margin: "0 auto", width: { xs: "100%", sm: 600 }, px: { xs: 2, sm: 0 } }}>
 
 
       <Typography variant="h5" fontWeight="bold">
@@ -203,7 +203,7 @@ export default function BookService() {
               value={timeSlot}
               label="Time Slot"
               onChange={(e) => setTimeSlot(e.target.value)}
-            //  disabled={!appointmentDate || availableSlots.length === 0}
+              disabled={!appointmentDate || availableSlots.length === 0}
             >
               <MenuItem value="">
                 <em>

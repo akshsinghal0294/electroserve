@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import { useNotification } from "../../context/NotificationContext";
 import {
   Box,
   Typography,
@@ -24,6 +25,7 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { notify } = useNotification();
 
   const [orders, setOrders] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -45,14 +47,15 @@ export default function Dashboard() {
         await axios.get("/api/services/all");
   
       const productsRes =
-        await axios.get("/api/products");
-  
+        await axios.get("/api/products?size=1000");
+
       setOrders(ordersRes.data);
       setBookings(bookingsRes.data);
-      setProducts(productsRes.data);
-  
+      setProducts(productsRes.data?.content || []);
+
     } catch (error) {
       console.error(error);
+      notify("Failed to load dashboard data.", "error");
     } finally {
       setLoading(false);
     }

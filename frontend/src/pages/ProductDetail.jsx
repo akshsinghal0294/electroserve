@@ -9,6 +9,7 @@ import StarRating from "../components/StarRating";
 
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useNotification } from "../context/NotificationContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -18,6 +19,7 @@ export default function ProductDetail() {
   const { addToCart } = useCart();
   const { user, isAuthenticated } =
     useAuth();
+  const { notify } = useNotification();
 
   const [product, setProduct] =
     useState(null);
@@ -80,8 +82,9 @@ export default function ProductDetail() {
         quantity
       );
 
-      alert(
-        "Added to cart successfully"
+      notify(
+        "Added to cart successfully",
+        "success"
       );
     };
 

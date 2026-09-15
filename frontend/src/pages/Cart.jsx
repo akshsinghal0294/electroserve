@@ -1,261 +1,101 @@
-import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
-  useParams,
-  useNavigate,
-} from "react-router-dom";
-
-import api from "../services/api";
-import StarRating from "../components/StarRating";
-
-import { useCart } from "../context/CartContext";
+  Box,
+  Typography,
+  Paper,
+  Button,
+  Divider,
+  Stack,
+} from "@mui/material";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
+import CartItem from "../components/CartItem";
 
-export default function ProductDetail() {
-  const { id } = useParams();
-
+export default function Cart() {
+  const { user } = useAuth();
+  const { cartItems, cartTotal, removeFromCart, updateQuantity } = useCart();
   const navigate = useNavigate();
 
-  const { addToCart } = useCart();
-  const { user, isAuthenticated } =
-    useAuth();
-
-  const [product, setProduct] =
-    useState(null);
-
-  const [reviews, setReviews] =
-    useState([]);
-
-  const [quantity, setQuantity] =
-    useState(1);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] =
-    useState("");
-
-  useEffect(() => {
-    loadProduct();
-    loadReviews();
-  }, [id]);
-
-  const loadProduct = async () => {
-    try {
-      const response = await api.get(
-        `/api/products/${id}`
-      );
-
-      setProduct(response.data);
-    } catch (err) {
-      setError(
-        "Failed to load product"
-      );
-    } finally {
-      setLoading(false);
-    }
+  const handleUpdateQuantity = (cartId, quantity) => {
+    if (quantity < 1) return;
+    updateQuantity(cartId, quantity, user.id);
   };
 
-  const loadReviews = async () => {
-    try {
-      const response = await api.get(
-        `/api/reviews/product/${id}`
-      );
-
-      setReviews(response.data);
-    } catch (err) {
-      setReviews([]);
-    }
+  const handleRemove = (cartId) => {
+    removeFromCart(cartId, user.id);
   };
 
-  const handleAddToCart =
-    async () => {
-      if (!isAuthenticated) {
-        navigate("/login");
-        return;
-      }
-
-      await addToCart(
-        user.id,
-        product.id,
-        quantity
-      );
-
-      alert(
-        "Added to cart successfully"
-      );
-    };
-
-  if (loading)
-    return <h2>Loading...</h2>;
-
-  if (error)
-    return <h2>{error}</h2>;
+  if (cartItems.length === 0) {
+    return (
+      <Box
+        sx={{
+          minHeight: "60vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 2,
+          px: 2,
+          textAlign: "center",
+        }}
+      >
+        <ShoppingCartOutlinedIcon sx={{ fontSize: 64, color: "text.disabled" }} />
+        <Typography variant="h5" fontWeight={600}>
+          Your cart is empty
+        </Typography>
+        <Typography color="text.secondary">
+          Browse our products and add something you like.
+        </Typography>
+        <Button component={Link} to="/products" variant="contained">
+          Shop Products
+        </Button>
+      </Box>
+    );
+  }
 
   return (
-    <div
-      style={{
-        padding: "30px",
-        maxWidth: "1200px",
-        margin: "0 auto",
-      }}
-    >
-      <button
-        onClick={() =>
-          navigate("/products")
-        }
-      >
-        ← Back
-      </button>
+    <Box sx={{ maxWidth: 900, mx: "auto", px: { xs: 2, sm: 3 }, py: 4 }}>
+      <Typography variant="h4" fontWeight={700} mb={3}>
+        Your Cart
+      </Typography>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "40px",
-          marginTop: "20px",
-          flexWrap: "wrap",
-        }}
-      >
-        <div>
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            style={{
-              width: "400px",
-              maxWidth: "100%",
-              borderRadius: "10px",
-            }}
+      <Box>
+        {cartItems.map((item) => (
+          <CartItem
+            key={item.id}
+            item={item}
+            onRemove={handleRemove}
+            onUpdateQuantity={handleUpdateQuantity}
           />
-        </div>
+        ))}
+      </Box>
 
-        <div
-          style={{
-            flex: 1,
-          }}
+      <Paper
+        variant="outlined"
+        sx={{ p: 3, mt: 2, borderRadius: 2 }}
+      >
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
         >
-          <h1>{product.name}</h1>
-
-          <h3>{product.brand}</h3>
-
-          <h2>
-            ₹{product.price}
-          </h2>
-
-          <p>
-            Stock Available:{" "}
-            {
-              product.stockQuantity
-            }
-          </p>
-
-          <p>
-            {
-              product.description
-            }
-          </p>
-
-          <StarRating
-            rating={4}
-          />
-
-          <div
-            style={{
-              marginTop: "20px",
-            }}
-          >
-            <button
-              onClick={() =>
-                setQuantity(
-                  Math.max(
-                    1,
-                    quantity - 1
-                  )
-                )
-              }
-            >
-              -
-            </button>
-
-            <span
-              style={{
-                margin:
-                  "0 15px",
-              }}
-            >
-              {quantity}
-            </span>
-
-            <button
-              onClick={() =>
-                setQuantity(
-                  quantity + 1
-                )
-              }
-            >
-              +
-            </button>
-          </div>
-
-          <button
-            onClick={
-              handleAddToCart
-            }
-            style={{
-              marginTop:
-                "20px",
-              padding:
-                "12px 20px",
-            }}
-          >
-            Add To Cart
-          </button>
-        </div>
-      </div>
-
-      <div
-        style={{
-          marginTop: "50px",
-        }}
-      >
-        <h2>Reviews</h2>
-
-        {reviews.length ===
-        0 ? (
-          <p>
-            No reviews
-            available
-          </p>
-        ) : (
-          reviews.map(
-            (review) => (
-              <div
-                key={
-                  review.id
-                }
-                style={{
-                  border:
-                    "1px solid #ddd",
-                  padding:
-                    "15px",
-                  marginBottom:
-                    "10px",
-                }}
-              >
-                <StarRating
-                  rating={
-                    review.rating
-                  }
-                />
-
-                <p>
-                  {
-                    review.comment
-                  }
-                </p>
-              </div>
-            )
-          )
-        )}
-      </div>
-    </div>
+          <Typography variant="h6">Total</Typography>
+          <Typography variant="h5" fontWeight={700} color="primary">
+            ₹{cartTotal.toFixed(2)}
+          </Typography>
+        </Stack>
+        <Divider sx={{ mb: 2 }} />
+        <Button
+          fullWidth
+          size="large"
+          variant="contained"
+          onClick={() => navigate("/checkout")}
+        >
+          Proceed to Checkout
+        </Button>
+      </Paper>
+    </Box>
   );
 }

@@ -1,25 +1,34 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+import BuildIcon from "@mui/icons-material/Build";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 
 import api from "../services/api";
 import ProductCard from "../components/ProductCard";
+import ServiceCard from "../components/ServiceCard";
+import { services } from "../data/services";
 
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useNotification } from "../context/NotificationContext";
 
 export default function Home() {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] =
-    useState([]);
-  const [loading, setLoading] =
-    useState(true);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const { addToCart } = useCart();
-  const { user, isAuthenticated } =
-    useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const { notify } = useNotification();
 
   useEffect(() => {
     loadData();
@@ -27,234 +36,191 @@ export default function Home() {
 
   const loadData = async () => {
     try {
-      const productsResponse =
-        await api.get("/api/products");
+      const productsResponse = await api.get("/api/products");
+      const categoriesResponse = await api.get("/api/categories");
 
-      const categoriesResponse =
-        await api.get("/api/categories");
+      const productList = Array.isArray(productsResponse.data)
+        ? productsResponse.data
+        : productsResponse.data.content || [];
 
-      setProducts(
-        productsResponse.data.slice(0, 8)
-      );
-
-      setCategories(
-        categoriesResponse.data
-      );
+      setProducts(productList.slice(0, 8));
+      setCategories(categoriesResponse.data);
     } catch (error) {
       console.error(error);
+      notify("Failed to load homepage data.", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddToCart = async (
-    product
-  ) => {
+  const handleAddToCart = async (product) => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
 
-    await addToCart(
-      user.id,
-      product.id,
-      1
-    );
-
-    alert("Added to cart");
+    await addToCart(user.id, product.id, 1);
   };
 
   return (
-    <div>
-
+    <Box>
       {/* Hero */}
-
-      <section
-        style={{
-          padding: "10px 10px",
+      <Box
+        component="section"
+        sx={{
+          bgcolor: "header.main",
+          color: "header.contrastText",
+          py: { xs: 6, sm: 10 },
+          px: 2,
           textAlign: "center",
-          background: "#f3f4f6",
         }}
       >
-        <h1
-          style={{
-            fontSize: "48px",
-            marginBottom: "20px",
+        <Typography
+          variant="h2"
+          fontWeight={800}
+          sx={{ fontSize: { xs: "2rem", sm: "3rem" }, mb: 2 }}
+        >
+          Your One-Stop Electronics Shop
+        </Typography>
+
+        <Typography
+          variant="h6"
+          sx={{ color: "grey.400", mb: 4, fontSize: { xs: "1rem", sm: "1.25rem" } }}
+        >
+          Genuine spare parts, gadgets &amp; expert repair services
+        </Typography>
+
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            justifyContent: "center",
+            flexWrap: "wrap",
           }}
         >
-          Your One Stop Electronics Shop
-        </h1>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            startIcon={<ShoppingBagIcon />}
+            onClick={() => navigate("/products")}
+          >
+            Shop Now
+          </Button>
 
-        <p
-          style={{
-            fontSize: "20px",
-            marginBottom: "30px",
-          }}
-        >
-          Buy Parts & Book Repair Services
-        </p>
-
-        <button
-          onClick={() =>
-            navigate("/products")
-          }
-          style={{
-            padding: "12px 25px",
-            marginRight: "10px",
-          }}
-        >
-          Shop Now
-        </button>
-
-        <button
-          onClick={() =>
-            navigate("/services")
-          }
-          style={{
-            padding: "12px 25px",
-          }}
-        >
-          Book Service
-        </button>
-      </section>
-
-      {/* Categories */}
-
-      <section
-        style={{
-          padding: "40px 20px",
-        }}
-      >
-        <h2>Categories</h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fill,minmax(200px,1fr))",
-            gap: "20px",
-          }}
-        >
-          {categories.map(
-            (category) => (
-              <div
-                key={category.id}
-                onClick={() =>
-                  navigate(
-                    `/products?category=${category.id}`
-                  )
-                }
-                style={{
-                  border: "1px solid #ddd",
-                  padding: "20px",
-                  cursor: "pointer",
-                  borderRadius: "10px",
-                }}
-              >
-                <h3>
-                  {category.name}
-                </h3>
-
-                <p>
-                  {
-                    category.description
-                  }
-                </p>
-              </div>
-            )
-          )}
-        </div>
-      </section>
-
-      {/* Products */}
-
-      <section
-        style={{
-          padding: "40px 20px",
-        }}
-      >
-        <h2>
-          Featured Products
-        </h2>
-
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fill,minmax(250px,1fr))",
-              gap: "20px",
+          <Button
+            variant="outlined"
+            size="large"
+            startIcon={<BuildIcon />}
+            onClick={() => navigate("/services")}
+            sx={{
+              color: "white",
+              borderColor: "white",
+              "&:hover": { borderColor: "grey.400", bgcolor: "rgba(255,255,255,0.08)" },
             }}
           >
-            {products.map(
-              (product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={
-                    handleAddToCart
-                  }
-                />
-              )
-            )}
-          </div>
+            Book Service
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Categories */}
+      {categories.length > 0 && (
+        <Container maxWidth="lg" component="section" sx={{ py: { xs: 4, sm: 6 } }}>
+          <Typography variant="h4" fontWeight={700} mb={3}>
+            Shop by Category
+          </Typography>
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "repeat(2, 1fr)",
+                sm: "repeat(3, 1fr)",
+                md: "repeat(4, 1fr)",
+              },
+              gap: 2,
+            }}
+          >
+            {categories.map((category) => (
+              <Box
+                key={category.id}
+                onClick={() => navigate(`/products?category=${category.id}`)}
+                sx={{
+                  border: "1px solid",
+                  borderColor: "grey.200",
+                  borderRadius: 2,
+                  p: 3,
+                  cursor: "pointer",
+                  textAlign: "center",
+                  transition: "box-shadow 0.2s, transform 0.2s",
+                  "&:hover": { boxShadow: 3, transform: "translateY(-2px)" },
+                }}
+              >
+                <Typography variant="subtitle1" fontWeight={600}>
+                  {category.name}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Container>
+      )}
+
+      {/* Featured Products */}
+      <Container maxWidth="lg" component="section" sx={{ py: { xs: 4, sm: 6 } }}>
+        <Typography variant="h4" fontWeight={700} mb={3}>
+          Featured Products
+        </Typography>
+
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr 1fr",
+                sm: "repeat(3, 1fr)",
+                md: "repeat(4, 1fr)",
+              },
+              gap: 3,
+            }}
+          >
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+              />
+            ))}
+          </Box>
         )}
-      </section>
+      </Container>
 
-      {/* Services */}
-
-      <section
-        style={{
-          padding: "40px 20px",
-        }}
-      >
-        <h2>
+      {/* Repair Services */}
+      <Container maxWidth="lg" component="section" sx={{ py: { xs: 4, sm: 6 } }}>
+        <Typography variant="h4" fontWeight={700} mb={3}>
           Repair Services
-        </h2>
+        </Typography>
 
-        <div
-          style={{
+        <Box
+          sx={{
             display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fill,minmax(250px,1fr))",
-            gap: "20px",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(4, 1fr)",
+            },
+            gap: 3,
           }}
         >
-          {[
-            "Refrigerator Repair",
-            "AC Service",
-            "TV Repair",
-            "Washing Machine Repair",
-          ].map((service) => (
-            <div
-              key={service}
-              style={{
-                border:
-                  "1px solid #ddd",
-                padding: "20px",
-                borderRadius:
-                  "10px",
-              }}
-            >
-              <h3>{service}</h3>
-
-              <button
-                onClick={() =>
-                  navigate(
-                    "/book-service"
-                  )
-                }
-              >
-                Book Now
-              </button>
-            </div>
+          {services.slice(0, 4).map((service) => (
+            <ServiceCard key={service.title} service={service} />
           ))}
-        </div>
-      </section>
-
-    </div>
+        </Box>
+      </Container>
+    </Box>
   );
 }
-
